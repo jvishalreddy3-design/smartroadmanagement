@@ -37,11 +37,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 DB_NAME = "smartcity_roads"
 
 # --- Google OAuth Configuration ---
-# Add these to your .env file:
-#   GOOGLE_CLIENT_ID=your-google-client-id
-#   GOOGLE_CLIENT_SECRET=your-google-client-secret
-#   GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
-#   FRONTEND_URL=http://localhost:5500   (or wherever index.html is served)
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/auth/google/callback")
@@ -51,7 +46,8 @@ MONGODB_URL = os.getenv("MONGODB_URI", os.getenv("MONGODB_URL", "mongodb://local
 if MONGODB_URL and MONGODB_URL.startswith('"') and MONGODB_URL.endswith('"'):
     MONGODB_URL = MONGODB_URL[1:-1]
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# SWAPPED BCRYPT FOR ARGON2 TO FIX VERCEL DEPLOYMENT
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI(title="SmartRoad Professional API")
@@ -182,6 +178,10 @@ async def seed_demo_data():
     print(f"[STARTUP] Connected database: {DB_NAME}")
     print(f"[STARTUP] Groq AI Integration: {'Active' if GROQ_API_KEY else 'Missing API Key'}")
     print(f"{'='*50}\n")
+
+@app.get("/")
+async def root():
+    return {"message": "SmartRoad API is running successfully on Vercel!"}
 
 @app.post("/api/chat")
 async def ai_chat(req: ChatRequest):
