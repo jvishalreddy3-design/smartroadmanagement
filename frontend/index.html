@@ -1319,7 +1319,11 @@
             }, { passive: true });
         }
 
-        const API_URL = 'http://127.0.0.1:8000';
+        // Auto-switches between local dev and the live Render backend based on
+        // where this page itself is being served from — no manual toggling needed.
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://127.0.0.1:8000'
+            : 'https://smartroadmanagement.onrender.com';
         let currentUser = null;
         let token = localStorage.getItem('token');
         let allComplaints = [];
