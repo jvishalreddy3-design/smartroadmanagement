@@ -46,8 +46,8 @@ MONGODB_URL = os.getenv("MONGODB_URI", os.getenv("MONGODB_URL", "mongodb://local
 if MONGODB_URL and MONGODB_URL.startswith('"') and MONGODB_URL.endswith('"'):
     MONGODB_URL = MONGODB_URL[1:-1]
 
-# SWAPPED BCRYPT FOR ARGON2 TO FIX VERCEL DEPLOYMENT
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+# SWAPPED BCRYPT FOR ARGON2 TO FIX VERCEL DEPLOYMENT, NOW ADDING BCRYPT BACK FOR LEGACY SUPPORT
+pwd_context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI(title="SmartRoad Professional API")
